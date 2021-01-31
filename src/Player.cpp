@@ -72,13 +72,13 @@ void Player::update(float elapsedTime, Vector2i mousePosition) {
   if (m_position.x > m_Arena.width - m_TileSize) {
     m_position.x = m_Arena.width - m_TileSize;
   }
-  if (m_position.x > m_Arena.width + m_TileSize) {
-    m_position.x = m_Arena.width + m_TileSize;
+  if (m_position.x < m_Arena.left + m_TileSize) {
+    m_position.x = m_Arena.left + m_TileSize;
   }
   if (m_position.y > m_Arena.height - m_TileSize) {
     m_position.y = m_Arena.height - m_TileSize;
   }
-  if (m_position.y > m_Arena.top + m_TileSize) {
+  if (m_position.y < m_Arena.top + m_TileSize) {
     m_position.y = m_Arena.top + m_TileSize;
   }
 

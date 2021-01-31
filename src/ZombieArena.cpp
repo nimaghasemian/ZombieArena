@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "ZombieArena.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -25,6 +26,9 @@ int main() {
   Vector2i mouseScreenPosition;
 
   Player player;
+  VertexArray background;
+  Texture backgroundTex;
+  backgroundTex.loadFromFile("recources/graphics/background_sheet.png");
 
   IntRect arena;
 
@@ -107,9 +111,10 @@ int main() {
         arena.height = 500;
         arena.left = 0;
         arena.top = 0;
-        int tileSize = 50;
+        int tileSize = createBackground(background,arena);
 
         player.spawn(arena, resolution, tileSize);
+
         clock.restart();
       }
     } // end leveling up
@@ -140,6 +145,7 @@ int main() {
     if (state == State::PLAYING) {
       window.clear();
       window.setView(mainView);
+      window.draw(background,&backgroundTex);
       window.draw(player.getSprite());
     }
     if (state == State::LEVELING_UP) {
