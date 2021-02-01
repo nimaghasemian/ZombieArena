@@ -1,13 +1,13 @@
 #include "Player.h"
 #include <cmath>
+#include "TextureHolder.h"
 Player::Player() {
   m_speed = START_SPEED;
   m_Health = START_HEALTH;
   m_MaxHealth = START_HEALTH;
 
   //!!watch this space!!
-  m_Texture.loadFromFile("recources/graphics/player.png");
-  m_sprite.setTexture(m_Texture);
+  m_sprite.setTexture(TextureHolder::GetTexture("recources/graphics/player.png"));
   m_sprite.setOrigin(25, 25);
 }
 void Player::spawn(IntRect arena, Vector2f resolution, int tileSize) {
@@ -84,8 +84,7 @@ void Player::update(float elapsedTime, Vector2i mousePosition) {
 
   float angle = (atan2(mousePosition.y - m_Resolution.y / 2,
                        mousePosition.x - m_Resolution.x / 2) *
-                 180) /
-                3.141;
+                 180) /3.141;
 
   m_sprite.setRotation(angle);
 }
