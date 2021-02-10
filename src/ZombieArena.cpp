@@ -2,6 +2,7 @@
 #include "ZombieArena.h"
 #include "TextureHolder.h"
 #include "Zombie.h"
+#include "Bullet.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -40,6 +41,22 @@ int main() {
   int numZombiesAlive;
   Zombie* zombies = nullptr;
 
+  //*****Bullets*******
+  Bullet bullets[100];
+  int currentBullet =0;
+  int bulletsSpare = 24;
+  int bulletsInClip = 6;
+  int clipSize = 6;
+  float fireRate = 1;
+  Time lastPressed;
+
+  //*******Crosshair********
+  window.setMouseCursorVisible(false);
+  Sprite spriteCrosshair;
+  Texture textureCrosshair = TextureHolder::GetTexture("recources/graphics/crosshair.png");
+  spriteCrosshair.setTexture(textureCrosshair);
+  spriteCrosshair.setOrigin(25,25);
+
   // the main game loop
   while (window.isOpen()) {
     /*
@@ -62,6 +79,17 @@ int main() {
           state = State::LEVELING_UP;
         }
         if (state == State::PLAYING) {
+          if (event.key.code == Keyboard ::R){
+            if (bulletsSpare >= clipSize){
+              bulletsInClip = clipSize;
+              bulletsSpare  -= clipSize;
+            }else if (bulletsSpare > 0){
+              bulletsInClip = bulletsSpare;
+              bulletsSpare = 0;
+            }else{
+
+            }
+          }
         }
       }
     } // end event polling
@@ -90,8 +118,23 @@ int main() {
       } else {
         player.stopLeft();
       }
+      if (Mouse::isButtonPressed(sf::Mouse::Left)){
+        if (gameTimeTotal.asMilliseconds() - lastPressed.asMilliseconds() > 1000/fireRate && bulletsInClip > 0 )
+        {
+          bullets[currentBullet].shoot(player.getCenter().x,player.getCenter().y,mouseWorldPosition.x,mouseWorldPosition.y);
+          currentBullet++;
+          if (currentBullet>99)
+          {
+            currentBullet = 0;
+          }
+          
+          lastPressed = gameTimeTotal;
+          bulletsInClip--;
+        }
+        
+      }
     } // end WSAD playing
-    // Handel the leveling up state
+    // Handle the leveling up state
     if (state == State::LEVELING_UP) {
     
       if (event.key.code == Keyboard::Num1) {
@@ -142,6 +185,8 @@ int main() {
       // convert Mouse position to world coordinates of mainView
       mouseWorldPosition =
           window.mapPixelToCoords(Mouse::getPosition(), mainView);
+          //set the crosshair to mouse position
+        spriteCrosshair.setPosition(mouseWorldPosition);
       // update the player
       player.update(dtAsSeconds, Mouse::getPosition());
       Vector2f playerPosition(player.getCenter());
@@ -153,6 +198,14 @@ int main() {
           zombies[i].update(dtAsSeconds,playerPosition);
         }
       }
+
+      for (int  i = 0; i < 100; i++)
+      {
+          if (bullets[i].isInFlight()){
+            bullets[i].update(dtAsSeconds);
+          }
+      }
+      
       
     } // end updating the scene
     /*
@@ -169,8 +222,16 @@ int main() {
       {
         window.draw(zombies[i].getSprite());
       }
+      for (int i = 0; i < 100; i++)
+      {
+        if (bullets[i].isInFlight()){
+          window.draw(bullets[i].getShape());
+        }
+      }
       
+  
       window.draw(player.getSprite());
+      window.draw(spriteCrosshair);
     }
     if (state == State::LEVELING_UP) {
     }
