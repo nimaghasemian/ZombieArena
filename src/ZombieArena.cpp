@@ -44,7 +44,7 @@ int main() {
   //*****Bullets*******
   Bullet bullets[100];
   int currentBullet =0;
-  int bulletsSpare = 24;
+  int bulletsSpare = 26;
   int bulletsInClip = 6;
   int clipSize = 6;
   float fireRate = 1;
